@@ -1087,7 +1087,7 @@ const cardPlanet = document.getElementById('cardPlanet');
 const cardLinks = document.getElementById('cardLinks');
 
 function showCard(planet, x, y) {
-  cardPlanet.textContent = planet.name;
+  cardPlanet.textContent = planet.links[0].label;
   cardLinks.innerHTML = '';
   planet.links.forEach(l => {
     const a = document.createElement('a');
