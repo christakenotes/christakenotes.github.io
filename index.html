@@ -227,12 +227,12 @@ const PLANETS = [
     id:'mercury',
     name:'Mercury',
     sub:'',
-    radius:6,
+    radius:8,
     orbitRadius:80,
     speed:4.15,
     color:'#b5b5b5',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-2,-2,1,0,0,6);
+      const g=ctx.createRadialGradient(-2,-2,1,0,0,8);
       g.addColorStop(0,'#d4d4d4');g.addColorStop(0.5,'#9e9e9e');g.addColorStop(1,'#5a5a5a');
       return g;
     },
@@ -242,12 +242,12 @@ const PLANETS = [
     id:'venus',
     name:'Venus',
     sub:'Threads',
-    radius:10,
+    radius:14,
     orbitRadius:130,
     speed:1.62,
     color:'#e8c97a',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-3,-3,1,0,0,10);
+      const g=ctx.createRadialGradient(-3,-3,1,0,0,14);
       g.addColorStop(0,'#f0dfa0');g.addColorStop(0.4,'#d4a83a');g.addColorStop(0.8,'#b8802a');g.addColorStop(1,'#7a5010');
       return g;
     },
@@ -257,12 +257,12 @@ const PLANETS = [
     id:'earth',
     name:'Earth',
     sub:'Discord',
-    radius:11,
+    radius:15,
     orbitRadius:190,
     speed:1.0,
     color:'#3a7bd5',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-3,-3,1,0,0,11);
+      const g=ctx.createRadialGradient(-3,-3,1,0,0,15);
       g.addColorStop(0,'#6ab4f5');g.addColorStop(0.35,'#3a7bd5');g.addColorStop(0.7,'#1a4a8a');g.addColorStop(1,'#0d2545');
       return g;
     },
@@ -272,12 +272,12 @@ const PLANETS = [
     id:'mars',
     name:'Mars',
     sub:'X / Twitter',
-    radius:8,
+    radius:11,
     orbitRadius:255,
     speed:0.53,
     color:'#c1440e',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-2,-2,1,0,0,8);
+      const g=ctx.createRadialGradient(-2,-2,1,0,0,11);
       g.addColorStop(0,'#e8623a');g.addColorStop(0.45,'#c1440e');g.addColorStop(0.8,'#8a2d08');g.addColorStop(1,'#4a1505');
       return g;
     },
@@ -287,12 +287,12 @@ const PLANETS = [
     id:'jupiter',
     name:'Jupiter',
     sub:'Whop',
-    radius:30,
+    radius:40,
     orbitRadius:360,
     speed:0.084,
     color:'#c88b3a',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-8,-8,2,0,0,30);
+      const g=ctx.createRadialGradient(-10,-10,2,0,0,40);
       g.addColorStop(0,'#e8c090');g.addColorStop(0.2,'#c88b3a');g.addColorStop(0.5,'#a06428');g.addColorStop(0.75,'#c89060');g.addColorStop(1,'#7a4018');
       return g;
     },
@@ -303,12 +303,12 @@ const PLANETS = [
     id:'saturn',
     name:'Saturn',
     sub:'',
-    radius:24,
+    radius:33,
     orbitRadius:470,
     speed:0.034,
     color:'#e4d090',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-6,-6,2,0,0,24);
+      const g=ctx.createRadialGradient(-8,-8,2,0,0,33);
       g.addColorStop(0,'#f0e0a8');g.addColorStop(0.3,'#d4b860');g.addColorStop(0.7,'#b09040');g.addColorStop(1,'#806820');
       return g;
     },
@@ -319,12 +319,12 @@ const PLANETS = [
     id:'uranus',
     name:'Uranus',
     sub:'',
-    radius:16,
+    radius:22,
     orbitRadius:570,
     speed:0.012,
     color:'#7de8e8',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-4,-4,1,0,0,16);
+      const g=ctx.createRadialGradient(-5,-5,1,0,0,22);
       g.addColorStop(0,'#b0f4f4');g.addColorStop(0.5,'#7de8e8');g.addColorStop(1,'#2a8888');
       return g;
     },
@@ -334,12 +334,12 @@ const PLANETS = [
     id:'neptune',
     name:'Neptune',
     sub:'Instagram',
-    radius:15,
+    radius:20,
     orbitRadius:660,
     speed:0.006,
     color:'#3f54ba',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-4,-4,1,0,0,15);
+      const g=ctx.createRadialGradient(-5,-5,1,0,0,20);
       g.addColorStop(0,'#7080e0');g.addColorStop(0.4,'#3f54ba');g.addColorStop(0.8,'#1a2870');g.addColorStop(1,'#080e30');
       return g;
     },
@@ -362,12 +362,14 @@ let mouseX = 0, mouseY = 0;
 function resize() {
   W = canvas.width = window.innerWidth;
   H = canvas.height = window.innerHeight;
-  cx = W / 2;
-  cy = H / 2;
-  // Scale orbits to fit screen — use 85% of shorter dimension / max orbit
+  cx = W * 0.5;
+  cy = H * 0.5;
   const maxOrbit = PLANETS[PLANETS.length-1].orbitRadius;
-  const fit = Math.min(W, H) * 0.44;
-  scale = fit / maxOrbit;
+  const availableW = W * 0.86;
+  const availableH = H * 0.46;
+  const scaleW = availableW / maxOrbit;
+  const scaleH = availableH / maxOrbit;
+  scale = Math.min(scaleW, scaleH);
 }
 
 // ─────────────────────────────────────────
@@ -754,7 +756,7 @@ function loop() {
   });
 
   // Sun
-  const sunR=36*scale;
+  const sunR=52*scale;
   const sunG=ctx.createRadialGradient(cx-sunR*0.2,cy-sunR*0.2,sunR*0.05,cx,cy,sunR*1.6);
   sunG.addColorStop(0,'#fff8e0');sunG.addColorStop(0.15,'#ffe060');
   sunG.addColorStop(0.4,'#ff9010');sunG.addColorStop(0.7,'rgba(255,120,0,0.3)');sunG.addColorStop(1,'rgba(255,80,0,0)');
