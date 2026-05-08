@@ -215,6 +215,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000008;color:#fff;f
       <div class="mobile-link-text"><div class="lname">Instagram</div><div class="lsub">@christakenotes</div></div>
       <span class="mobile-link-arrow">→</span>
     </a>
+    <a class="mobile-link" href="https://www.tiktok.com/@christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-mercury" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">TikTok</div><div class="lsub">@christakenotes</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+    <a class="mobile-link" href="https://www.youtube.com/@christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-saturn" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">YouTube</div><div class="lsub">@christakenotes</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
   </div>
 </div>
 
@@ -224,125 +234,139 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000008;color:#fff;f
 // ─────────────────────────────────────────
 const PLANETS = [
   {
+    // SCORCHED LAVA WORLD — black crust, glowing orange fissures
     id:'mercury',
     name:'Mercury',
-    sub:'',
+    sub:'TikTok',
     radius:8,
     orbitRadius:80,
     speed:4.15,
-    color:'#b5b5b5',
+    color:'#ff5500',
     texture: ctx => {
       const g=ctx.createRadialGradient(-2,-2,1,0,0,8);
-      g.addColorStop(0,'#d4d4d4');g.addColorStop(0.5,'#9e9e9e');g.addColorStop(1,'#5a5a5a');
+      g.addColorStop(0,'#2a0a00');g.addColorStop(0.4,'#1a0500');g.addColorStop(0.8,'#0d0200');g.addColorStop(1,'#050100');
       return g;
     },
-    links:null
+    lava:true,
+    links:[{label:'TikTok',sub:'@christakenotes',url:'https://www.tiktok.com/@christakenotes'}]
   },
   {
+    // HYCEAN WORLD — deep teal ocean, thick luminous atmosphere
     id:'venus',
     name:'Venus',
     sub:'Threads',
     radius:14,
     orbitRadius:130,
     speed:1.62,
-    color:'#e8c97a',
+    color:'#0dd4b8',
     texture: ctx => {
       const g=ctx.createRadialGradient(-3,-3,1,0,0,14);
-      g.addColorStop(0,'#f0dfa0');g.addColorStop(0.4,'#d4a83a');g.addColorStop(0.8,'#b8802a');g.addColorStop(1,'#7a5010');
+      g.addColorStop(0,'#80ffe8');g.addColorStop(0.3,'#0dd4b8');g.addColorStop(0.65,'#057a6a');g.addColorStop(1,'#012e28');
       return g;
     },
+    hycean:true,
     links:[{label:'Threads',sub:'@christakenotes',url:'https://www.threads.net/@christakenotes'}]
   },
   {
+    // GAS GIANT — swirling deep purple and indigo bands
     id:'earth',
     name:'Earth',
     sub:'Discord',
     radius:15,
     orbitRadius:190,
     speed:1.0,
-    color:'#3a7bd5',
+    color:'#7c3aed',
     texture: ctx => {
       const g=ctx.createRadialGradient(-3,-3,1,0,0,15);
-      g.addColorStop(0,'#6ab4f5');g.addColorStop(0.35,'#3a7bd5');g.addColorStop(0.7,'#1a4a8a');g.addColorStop(1,'#0d2545');
+      g.addColorStop(0,'#c084fc');g.addColorStop(0.25,'#7c3aed');g.addColorStop(0.55,'#4c1d95');g.addColorStop(0.8,'#2e1065');g.addColorStop(1,'#0f0520');
       return g;
     },
+    gasbands:true,
     links:[{label:'Singularity Discord',sub:'Join the community',url:'https://discord.gg/X7kYEz9Qvu'}]
   },
   {
+    // CRYSTALLINE ICE WORLD — pale blue-white, cold and sharp
     id:'mars',
     name:'Mars',
     sub:'X / Twitter',
     radius:11,
     orbitRadius:255,
     speed:0.53,
-    color:'#c1440e',
+    color:'#b8e8ff',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-2,-2,1,0,0,11);
-      g.addColorStop(0,'#e8623a');g.addColorStop(0.45,'#c1440e');g.addColorStop(0.8,'#8a2d08');g.addColorStop(1,'#4a1505');
+      const g=ctx.createRadialGradient(-3,-3,1,0,0,11);
+      g.addColorStop(0,'#ffffff');g.addColorStop(0.2,'#d8f4ff');g.addColorStop(0.55,'#7ec8e3');g.addColorStop(0.8,'#3a7a95');g.addColorStop(1,'#0a2030');
       return g;
     },
-    links:[{label:'X / Twitter',sub:'Trades · Thoughts · Space facts',url:'https://x.com/christakenotes'}]
+    crystal:true,
+    links:[{label:'X / Twitter',sub:'Trades · Thoughts',url:'https://x.com/christakenotes'}]
   },
   {
+    // MOLTEN SUPER-GIANT — deep red magma, no bands, raw heat
     id:'jupiter',
     name:'Jupiter',
     sub:'Whop',
     radius:40,
     orbitRadius:360,
     speed:0.084,
-    color:'#c88b3a',
+    color:'#cc1a00',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-10,-10,2,0,0,40);
-      g.addColorStop(0,'#e8c090');g.addColorStop(0.2,'#c88b3a');g.addColorStop(0.5,'#a06428');g.addColorStop(0.75,'#c89060');g.addColorStop(1,'#7a4018');
+      const g=ctx.createRadialGradient(-10,-8,2,0,0,40);
+      g.addColorStop(0,'#ff6030');g.addColorStop(0.2,'#cc1a00');g.addColorStop(0.5,'#880800');g.addColorStop(0.75,'#550300');g.addColorStop(1,'#200100');
       return g;
     },
-    bands:true,
+    molten:true,
     links:[{label:'Whop',sub:'Indicators · Playbooks · Membership',url:'https://whop.com/christakenotes'}]
   },
   {
+    // RINGED GAS GIANT — sickly green-grey body, electric blue rings
     id:'saturn',
     name:'Saturn',
-    sub:'',
+    sub:'YouTube',
     radius:33,
     orbitRadius:470,
     speed:0.034,
-    color:'#e4d090',
+    color:'#6aff80',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-8,-8,2,0,0,33);
-      g.addColorStop(0,'#f0e0a8');g.addColorStop(0.3,'#d4b860');g.addColorStop(0.7,'#b09040');g.addColorStop(1,'#806820');
+      const g=ctx.createRadialGradient(-8,-6,2,0,0,33);
+      g.addColorStop(0,'#a8ffb8');g.addColorStop(0.25,'#5ada70');g.addColorStop(0.55,'#2d7a40');g.addColorStop(0.8,'#1a4a28');g.addColorStop(1,'#080f0a');
       return g;
     },
-    rings:true,
-    links:null
+    exorings:true,
+    links:[{label:'YouTube',sub:'@christakenotes',url:'https://www.youtube.com/@christakenotes'}]
   },
   {
+    // CARBON PLANET — pitch black with diamond-white shimmer and pale rim
     id:'uranus',
     name:'Uranus',
     sub:'',
     radius:22,
     orbitRadius:570,
     speed:0.012,
-    color:'#7de8e8',
+    color:'#e8e8ff',
     texture: ctx => {
       const g=ctx.createRadialGradient(-5,-5,1,0,0,22);
-      g.addColorStop(0,'#b0f4f4');g.addColorStop(0.5,'#7de8e8');g.addColorStop(1,'#2a8888');
+      g.addColorStop(0,'#d0d0f0');g.addColorStop(0.2,'#404060');g.addColorStop(0.5,'#181820');g.addColorStop(0.8,'#080810');g.addColorStop(1,'#020205');
       return g;
     },
+    carbon:true,
     links:null
   },
   {
+    // ROGUE WORLD — deep violet, cold, faint aurora rim
     id:'neptune',
     name:'Neptune',
     sub:'Instagram',
     radius:20,
     orbitRadius:660,
     speed:0.006,
-    color:'#3f54ba',
+    color:'#9b30ff',
     texture: ctx => {
-      const g=ctx.createRadialGradient(-5,-5,1,0,0,20);
-      g.addColorStop(0,'#7080e0');g.addColorStop(0.4,'#3f54ba');g.addColorStop(0.8,'#1a2870');g.addColorStop(1,'#080e30');
+      const g=ctx.createRadialGradient(-5,-4,1,0,0,20);
+      g.addColorStop(0,'#d080ff');g.addColorStop(0.3,'#9b30ff');g.addColorStop(0.6,'#5a0090');g.addColorStop(0.85,'#2a0050');g.addColorStop(1,'#080010');
       return g;
     },
+    aurora:true,
     links:[{label:'Instagram',sub:'@christakenotes',url:'https://www.instagram.com/christakenotes'}]
   }
 ];
@@ -659,45 +683,161 @@ function drawPlanetShape(pCtx, planet, r) {
   pCtx.fillStyle = planet.texture(pCtx);
   pCtx.fill();
 
-  // Jupiter bands
-  if (planet.bands) {
-    const bandColors = ['rgba(180,120,60,0.3)','rgba(220,180,100,0.2)','rgba(160,100,40,0.35)','rgba(200,150,80,0.25)'];
-    const bandY = [-r*0.5,-r*0.15,r*0.2,r*0.55];
-    const bandH = [r*0.18,r*0.2,r*0.18,r*0.15];
+  // ── LAVA WORLD — glowing crack network ──
+  if (planet.lava) {
     pCtx.save();
-    pCtx.beginPath();
-    pCtx.arc(0,0,r,0,Math.PI*2);
-    pCtx.clip();
-    bandColors.forEach((c,i) => {
-      pCtx.fillStyle = c;
-      pCtx.fillRect(-r, bandY[i], r*2, bandH[i]);
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    const cracks = [[0,0,r*0.6,r*0.3],[0,0,-r*0.5,r*0.4],[0,0,r*0.2,-r*0.6],[0,0,-r*0.4,-r*0.3]];
+    cracks.forEach(([x1,y1,x2,y2])=>{
+      const lg=pCtx.createLinearGradient(x1,y1,x2,y2);
+      lg.addColorStop(0,'rgba(255,120,0,0.9)');
+      lg.addColorStop(0.5,'rgba(255,60,0,0.6)');
+      lg.addColorStop(1,'rgba(255,200,0,0.3)');
+      pCtx.strokeStyle=lg;pCtx.lineWidth=r*0.08;
+      pCtx.beginPath();pCtx.moveTo(x1,y1);pCtx.lineTo(x2,y2);pCtx.stroke();
+      // sub-crack
+      pCtx.lineWidth=r*0.04;
+      pCtx.beginPath();pCtx.moveTo((x1+x2)*0.4,(y1+y2)*0.4);
+      pCtx.lineTo(x2*0.6+y2*0.3,y2*0.6-x2*0.2);pCtx.stroke();
     });
-    // Great Red Spot
-    pCtx.beginPath();
-    pCtx.ellipse(r*0.2, r*0.25, r*0.18, r*0.1, 0, 0, Math.PI*2);
-    pCtx.fillStyle = 'rgba(180,60,30,0.45)';
-    pCtx.fill();
+    // Lava glow center
+    const lg=pCtx.createRadialGradient(0,0,0,0,0,r*0.5);
+    lg.addColorStop(0,'rgba(255,80,0,0.3)');lg.addColorStop(1,'rgba(0,0,0,0)');
+    pCtx.fillStyle=lg;pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fill();
     pCtx.restore();
   }
 
-  // Atmosphere rim
+  // ── HYCEAN — thick atmosphere haze ring ──
+  if (planet.hycean) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    // Atmosphere shimmer bands
+    for(let i=0;i<3;i++){
+      const by = -r*0.5 + i*r*0.4;
+      pCtx.fillStyle=`rgba(180,255,240,${0.06-i*0.015})`;
+      pCtx.fillRect(-r,by,r*2,r*0.15);
+    }
+    pCtx.restore();
+    // Outer atmosphere haze
+    const haze=pCtx.createRadialGradient(0,0,r*0.8,0,0,r*1.15);
+    haze.addColorStop(0,'rgba(0,255,200,0)');
+    haze.addColorStop(0.6,'rgba(0,255,200,0.12)');
+    haze.addColorStop(1,'rgba(0,255,200,0)');
+    pCtx.beginPath();pCtx.arc(0,0,r*1.15,0,Math.PI*2);
+    pCtx.fillStyle=haze;pCtx.fill();
+  }
+
+  // ── GAS BANDS — purple/indigo swirling bands ──
+  if (planet.gasbands) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    const bandDefs=[
+      {y:-r*0.6,h:r*0.22,c:'rgba(180,100,255,0.35)'},
+      {y:-r*0.25,h:r*0.18,c:'rgba(100,40,200,0.3)'},
+      {y:r*0.05,h:r*0.2,c:'rgba(200,140,255,0.25)'},
+      {y:r*0.38,h:r*0.16,c:'rgba(80,20,160,0.3)'},
+    ];
+    bandDefs.forEach(b=>{
+      pCtx.fillStyle=b.c;
+      pCtx.fillRect(-r,b.y,r*2,b.h);
+    });
+    pCtx.restore();
+  }
+
+  // ── CRYSTAL — angular facet shimmer ──
+  if (planet.crystal) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    const facets=[
+      [-r*0.3,-r*0.4,r*0.6,r*0.3],
+      [r*0.1,-r*0.2,-r*0.5,r*0.5],
+      [-r*0.1,r*0.1,r*0.4,-r*0.5],
+    ];
+    facets.forEach(([x1,y1,x2,y2])=>{
+      pCtx.strokeStyle='rgba(255,255,255,0.25)';pCtx.lineWidth=r*0.06;
+      pCtx.beginPath();pCtx.moveTo(x1,y1);pCtx.lineTo(x2,y2);pCtx.stroke();
+    });
+    // Ice shimmer
+    const shimmer=pCtx.createRadialGradient(-r*0.3,-r*0.35,0,-r*0.3,-r*0.35,r*0.5);
+    shimmer.addColorStop(0,'rgba(255,255,255,0.3)');shimmer.addColorStop(1,'rgba(255,255,255,0)');
+    pCtx.fillStyle=shimmer;pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fill();
+    pCtx.restore();
+  }
+
+  // ── MOLTEN — magma surface veins ──
+  if (planet.molten) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    // Magma pools
+    [[r*0.2,r*0.1,r*0.25],[-r*0.3,-r*0.2,r*0.18],[r*0.0,-r*0.35,r*0.15],[-r*0.1,r*0.3,r*0.2]].forEach(([mx,my,mr])=>{
+      const mg=pCtx.createRadialGradient(mx,my,0,mx,my,mr);
+      mg.addColorStop(0,'rgba(255,140,0,0.5)');mg.addColorStop(0.5,'rgba(200,40,0,0.3)');mg.addColorStop(1,'rgba(0,0,0,0)');
+      pCtx.fillStyle=mg;pCtx.beginPath();pCtx.arc(mx,my,mr,0,Math.PI*2);pCtx.fill();
+    });
+    // Heat glow
+    const heat=pCtx.createRadialGradient(0,0,r*0.3,0,0,r);
+    heat.addColorStop(0,'rgba(255,60,0,0.15)');heat.addColorStop(1,'rgba(0,0,0,0)');
+    pCtx.fillStyle=heat;pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fill();
+    pCtx.restore();
+    // Outer heat corona
+    const corona=pCtx.createRadialGradient(0,0,r*0.85,0,0,r*1.2);
+    corona.addColorStop(0,'rgba(255,40,0,0)');corona.addColorStop(0.5,'rgba(255,40,0,0.08)');corona.addColorStop(1,'rgba(255,40,0,0)');
+    pCtx.beginPath();pCtx.arc(0,0,r*1.2,0,Math.PI*2);pCtx.fillStyle=corona;pCtx.fill();
+  }
+
+  // ── CARBON — diamond facets, pale shimmer on black ──
+  if (planet.carbon) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    const cfacets=[
+      [-r*0.4,-r*0.3,r*0.5,r*0.2],[r*0.2,-r*0.5,-r*0.3,r*0.4],
+      [-r*0.1,r*0.2,r*0.4,-r*0.3],[r*0.1,r*0.3,-r*0.4,-r*0.1]
+    ];
+    cfacets.forEach(([x1,y1,x2,y2])=>{
+      pCtx.strokeStyle='rgba(220,220,255,0.2)';pCtx.lineWidth=r*0.04;
+      pCtx.beginPath();pCtx.moveTo(x1,y1);pCtx.lineTo(x2,y2);pCtx.stroke();
+    });
+    // Diamond glint
+    const glint=pCtx.createRadialGradient(-r*0.25,-r*0.3,0,-r*0.25,-r*0.3,r*0.3);
+    glint.addColorStop(0,'rgba(255,255,255,0.35)');glint.addColorStop(1,'rgba(255,255,255,0)');
+    pCtx.fillStyle=glint;pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fill();
+    pCtx.restore();
+    // Pale shimmer rim
+    const crim=pCtx.createRadialGradient(0,0,r*0.7,0,0,r*1.05);
+    crim.addColorStop(0,'rgba(200,200,255,0)');crim.addColorStop(0.7,'rgba(200,200,255,0.08)');crim.addColorStop(1,'rgba(200,200,255,0)');
+    pCtx.beginPath();pCtx.arc(0,0,r*1.05,0,Math.PI*2);pCtx.fillStyle=crim;pCtx.fill();
+  }
+
+  // ── AURORA — violet rogue world with aurora rim ──
+  if (planet.aurora) {
+    pCtx.save();
+    pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.clip();
+    // Subtle swirl
+    const sw=pCtx.createRadialGradient(-r*0.2,-r*0.2,0,r*0.1,r*0.1,r*0.8);
+    sw.addColorStop(0,'rgba(200,100,255,0.2)');sw.addColorStop(1,'rgba(0,0,0,0)');
+    pCtx.fillStyle=sw;pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fill();
+    pCtx.restore();
+    // Aurora glow ring
+    const aur=pCtx.createRadialGradient(0,0,r*0.82,0,0,r*1.25);
+    aur.addColorStop(0,'rgba(160,40,255,0)');
+    aur.addColorStop(0.4,'rgba(100,255,200,0.12)');
+    aur.addColorStop(0.7,'rgba(160,40,255,0.1)');
+    aur.addColorStop(1,'rgba(0,0,0,0)');
+    pCtx.beginPath();pCtx.arc(0,0,r*1.25,0,Math.PI*2);pCtx.fillStyle=aur;pCtx.fill();
+  }
+
+  // Atmosphere rim (all planets)
   const rimG = pCtx.createRadialGradient(0,0,r*0.75,0,0,r);
   rimG.addColorStop(0,'rgba(255,255,255,0)');
-  rimG.addColorStop(0.7,'rgba(255,255,255,0.03)');
-  rimG.addColorStop(1,'rgba(255,255,255,0.12)');
-  pCtx.beginPath();
-  pCtx.arc(0,0,r,0,Math.PI*2);
-  pCtx.fillStyle = rimG;
-  pCtx.fill();
+  rimG.addColorStop(0.7,'rgba(255,255,255,0.02)');
+  rimG.addColorStop(1,'rgba(255,255,255,0.1)');
+  pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fillStyle=rimG;pCtx.fill();
 
   // Specular highlight
   const specG = pCtx.createRadialGradient(-r*0.35,-r*0.4,0,-r*0.35,-r*0.4,r*0.5);
-  specG.addColorStop(0,'rgba(255,255,255,0.22)');
+  specG.addColorStop(0,'rgba(255,255,255,0.2)');
   specG.addColorStop(1,'rgba(255,255,255,0)');
-  pCtx.beginPath();
-  pCtx.arc(0,0,r,0,Math.PI*2);
-  pCtx.fillStyle = specG;
-  pCtx.fill();
+  pCtx.beginPath();pCtx.arc(0,0,r,0,Math.PI*2);pCtx.fillStyle=specG;pCtx.fill();
 
   pCtx.restore();
 }
@@ -845,8 +985,64 @@ function draw() {
 }
 
 // ─────────────────────────────────────────
-// LABELS
+// SHOOTING STARS
 // ─────────────────────────────────────────
+let shootingStars = [];
+
+function spawnShootingStar() {
+  const angle = (15 + Math.random() * 25) * Math.PI / 180; // shallow diagonal
+  const startX = Math.random() * W * 1.2 - W * 0.1;
+  const startY = Math.random() * H * 0.5; // upper half only
+  const speed = 4 + Math.random() * 4;
+  const length = 60 + Math.random() * 80;
+  shootingStars.push({
+    x: startX, y: startY,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    length, speed,
+    life: 1.0,
+    decay: 0.018 + Math.random() * 0.012
+  });
+}
+
+function drawShootingStars() {
+  shootingStars = shootingStars.filter(s => s.life > 0);
+  shootingStars.forEach(s => {
+    const tailX = s.x - s.vx * (s.length / s.speed);
+    const tailY = s.y - s.vy * (s.length / s.speed);
+    const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+    grad.addColorStop(0, 'rgba(255,255,255,0)');
+    grad.addColorStop(0.7, `rgba(220,235,255,${s.life * 0.25})`);
+    grad.addColorStop(1, `rgba(255,255,255,${s.life * 0.7})`);
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(s.x, s.y);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    // Head glow
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 1.2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.life * 0.6})`;
+    ctx.fill();
+    s.x += s.vx;
+    s.y += s.vy;
+    s.life -= s.decay;
+  });
+}
+
+let nextShoot = 0;
+function tickShootingStars() {
+  nextShoot--;
+  if (nextShoot <= 0) {
+    spawnShootingStar();
+    // Random gap: 4–12 seconds at 60fps
+    nextShoot = 240 + Math.floor(Math.random() * 480);
+  }
+  drawShootingStars();
+}
+
+
 let labelEls = {};
 
 function initLabels() {
@@ -972,6 +1168,8 @@ function checkMobile() {
     renderMiniPlanet('mp-mars', PLANETS.find(p=>p.id==='mars'));
     renderMiniPlanet('mp-venus', PLANETS.find(p=>p.id==='venus'));
     renderMiniPlanet('mp-neptune', PLANETS.find(p=>p.id==='neptune'));
+    renderMiniPlanet('mp-mercury', PLANETS.find(p=>p.id==='mercury'));
+    renderMiniPlanet('mp-saturn', PLANETS.find(p=>p.id==='saturn'));
   } else {
     document.getElementById('mobileView').classList.remove('active');
   }
@@ -985,6 +1183,7 @@ function loop() {
   ctx.clearRect(0,0,W,H);
 
   drawStars();
+  tickShootingStars();
 
   // Orbit paths
   PLANETS.forEach(p=>{
@@ -1017,12 +1216,12 @@ function loop() {
     const py=cy+Math.sin(angles[p.id])*orb;
     const r=Math.max(4,p.radius*scale);
 
-    if(p.rings){
+    if(p.rings||p.exorings){
       ctx.save();ctx.translate(px,py);ctx.scale(1,0.28);
-      [{inner:r*1.25,outer:r*1.9,color:'rgba(220,200,140,0.22)'},
-       {inner:r*1.9,outer:r*2.4,color:'rgba(200,180,110,0.16)'},
-       {inner:r*2.4,outer:r*2.8,color:'rgba(180,160,90,0.1)'}
-      ].forEach(ring=>{
+      const ringColors = p.exorings
+        ? [{inner:r*1.25,outer:r*1.9,color:'rgba(0,180,255,0.28)'},{inner:r*1.9,outer:r*2.4,color:'rgba(0,120,255,0.2)'},{inner:r*2.4,outer:r*2.8,color:'rgba(80,200,255,0.12)'}]
+        : [{inner:r*1.25,outer:r*1.9,color:'rgba(220,200,140,0.22)'},{inner:r*1.9,outer:r*2.4,color:'rgba(200,180,110,0.16)'},{inner:r*2.4,outer:r*2.8,color:'rgba(180,160,90,0.1)'}];
+      ringColors.forEach(ring=>{
         ctx.beginPath();ctx.arc(0,0,ring.outer,0,Math.PI*2);ctx.arc(0,0,ring.inner,0,Math.PI*2,true);
         ctx.fillStyle=ring.color;ctx.fill();
       });
