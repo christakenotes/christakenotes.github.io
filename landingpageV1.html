@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>christakenotes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000008;color:#fff;font-family:'DM Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased}
+
+/* ── CANVAS ── */
+#universe{position:fixed;inset:0;z-index:0}
+
+/* ── SCANLINES ── */
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px)}
+
+/* ── WORDMARK ── */
+.wordmark{
+  position:fixed;
+  top:36px;left:50%;transform:translateX(-50%);
+  z-index:20;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  animation:fadeUp 1s ease 0.5s forwards;
+}
+.wordmark h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,5vw,48px);
+  letter-spacing:0.14em;
+  color:#fff;
+  line-height:1;
+}
+.wordmark p{
+  font-size:10px;
+  letter-spacing:0.22em;
+  color:rgba(255,255,255,0.35);
+  margin-top:6px;
+  text-transform:uppercase;
+}
+.cyan-line{
+  width:40px;height:1px;
+  background:linear-gradient(90deg,transparent,#18d4f0,transparent);
+  margin:10px auto 0;
+}
+
+/* ── HINT ── */
+.hint{
+  position:fixed;
+  bottom:32px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+  z-index:20;pointer-events:none;
+  opacity:0;animation:fadeUp 1s ease 2s forwards;
+  white-space:nowrap;
+}
+
+/* ── TOOLTIP / LABEL ── */
+.planet-label{
+  position:fixed;
+  z-index:30;
+  pointer-events:none;
+  transform:translateX(-50%);
+  text-align:center;
+  transition:opacity 0.3s ease;
+}
+.planet-label .lname{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;
+  letter-spacing:0.14em;
+  color:#fff;
+  line-height:1;
+  text-shadow:0 0 12px rgba(0,0,0,0.9),0 0 24px rgba(0,0,0,0.9);
+}
+.planet-label .lsub{
+  font-size:8px;
+  letter-spacing:0.16em;
+  color:rgba(24,212,240,0.7);
+  margin-top:2px;
+  text-shadow:0 0 8px rgba(0,0,0,0.9);
+}
+
+/* ── LINK POPUP (hover card) ── */
+.link-card{
+  position:fixed;
+  z-index:40;
+  background:rgba(0,0,10,0.92);
+  border:1px solid rgba(24,212,240,0.25);
+  border-left:2px solid #18d4f0;
+  padding:14px 20px;
+  min-width:200px;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity 0.2s ease,transform 0.2s ease;
+  backdrop-filter:blur(12px);
+}
+.link-card.visible{
+  opacity:1;transform:translateY(0);pointer-events:auto;
+}
+.link-card .card-planet{
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(24,212,240,0.6);margin-bottom:6px;
+}
+.link-card .card-link{
+  display:block;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;letter-spacing:0.1em;
+  color:#fff;text-decoration:none;
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  transition:color 0.2s ease;
+}
+.link-card .card-link:last-of-type{border-bottom:none}
+.link-card .card-link:hover{color:#18d4f0}
+.link-card .card-arrow{
+  font-size:10px;color:rgba(24,212,240,0.5);
+  float:right;margin-top:1px;
+}
+
+/* ── MOBILE FALLBACK ── */
+.mobile-view{
+  display:none;
+  position:fixed;inset:0;z-index:50;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;
+  background:rgba(0,0,8,0.97);
+  overflow-y:auto;
+}
+.mobile-view.active{display:flex}
+
+.mobile-header{text-align:center;margin-bottom:40px}
+.mobile-header h1{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:0.14em}
+.mobile-header p{font-size:10px;letter-spacing:0.2em;color:rgba(255,255,255,0.35);margin-top:6px;text-transform:uppercase}
+
+.mobile-links{width:100%;max-width:400px;display:flex;flex-direction:column;gap:10px}
+.mobile-section{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin:16px 0 6px;padding-left:2px}
+.mobile-link{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  background:rgba(24,212,240,0.05);
+  border:1px solid rgba(255,255,255,0.06);
+  border-left:2px solid rgba(24,212,240,0.4);
+  text-decoration:none;color:#fff;
+}
+.mobile-link-planet{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+}
+.mobile-link-text .lname{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:0.1em;line-height:1}
+.mobile-link-text .lsub{font-size:9px;letter-spacing:0.12em;color:rgba(24,212,240,0.6);margin-top:2px}
+.mobile-link-arrow{margin-left:auto;color:rgba(24,212,240,0.4);font-size:13px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fadeUpBasic{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<canvas id="universe"></canvas>
+<div class="scanlines"></div>
+
+<div class="wordmark">
+  <h1>christakenotes</h1>
+  <p>Futures Trader · Creator</p>
+  <div class="cyan-line"></div>
+</div>
+
+<div class="hint">Click a planet to explore</div>
+
+<!-- Hover card -->
+<div class="link-card" id="linkCard">
+  <div class="card-planet" id="cardPlanet"></div>
+  <div id="cardLinks"></div>
+</div>
+
+<!-- Planet labels (injected by JS) -->
+<div id="labels"></div>
+
+<!-- Mobile fallback -->
+<div class="mobile-view" id="mobileView">
+  <div class="mobile-header">
+    <h1>christakenotes</h1>
+    <p>Futures Trader · Creator</p>
+    <div class="cyan-line" style="margin-top:12px"></div>
+  </div>
+  <div class="mobile-links">
+    <div class="mobile-section">Community</div>
+    <a class="mobile-link" href="https://discord.gg/X7kYEz9Qvu" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-earth" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">Singularity</div><div class="lsub">Discord Community</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+    <a class="mobile-link" href="https://whop.com/christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-jupiter" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">Whop</div><div class="lsub">Indicators · Membership</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+    <div class="mobile-section">Follow</div>
+    <a class="mobile-link" href="https://x.com/christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-mars" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">X / Twitter</div><div class="lsub">Trades · Thoughts</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+    <a class="mobile-link" href="https://www.threads.net/@christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-venus" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">Threads</div><div class="lsub">@christakenotes</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+    <a class="mobile-link" href="https://www.instagram.com/christakenotes" target="_blank">
+      <canvas class="mobile-link-planet" id="mp-neptune" width="28" height="28"></canvas>
+      <div class="mobile-link-text"><div class="lname">Instagram</div><div class="lsub">@christakenotes</div></div>
+      <span class="mobile-link-arrow">→</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// PLANET DATA — replica colors/sizes
+// ─────────────────────────────────────────
+const PLANETS = [
+  {
+    id:'mercury',
+    name:'Mercury',
+    sub:'',
+    radius:6,
+    orbitRadius:80,
+    speed:4.15,
+    color:'#b5b5b5',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-2,-2,1,0,0,6);
+      g.addColorStop(0,'#d4d4d4');g.addColorStop(0.5,'#9e9e9e');g.addColorStop(1,'#5a5a5a');
+      return g;
+    },
+    links:null
+  },
+  {
+    id:'venus',
+    name:'Venus',
+    sub:'Threads',
+    radius:10,
+    orbitRadius:130,
+    speed:1.62,
+    color:'#e8c97a',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-3,-3,1,0,0,10);
+      g.addColorStop(0,'#f0dfa0');g.addColorStop(0.4,'#d4a83a');g.addColorStop(0.8,'#b8802a');g.addColorStop(1,'#7a5010');
+      return g;
+    },
+    links:[{label:'Threads',sub:'@christakenotes',url:'https://www.threads.net/@christakenotes'}]
+  },
+  {
+    id:'earth',
+    name:'Earth',
+    sub:'Discord',
+    radius:11,
+    orbitRadius:190,
+    speed:1.0,
+    color:'#3a7bd5',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-3,-3,1,0,0,11);
+      g.addColorStop(0,'#6ab4f5');g.addColorStop(0.35,'#3a7bd5');g.addColorStop(0.7,'#1a4a8a');g.addColorStop(1,'#0d2545');
+      return g;
+    },
+    links:[{label:'Singularity Discord',sub:'Join the community',url:'https://discord.gg/X7kYEz9Qvu'}]
+  },
+  {
+    id:'mars',
+    name:'Mars',
+    sub:'X / Twitter',
+    radius:8,
+    orbitRadius:255,
+    speed:0.53,
+    color:'#c1440e',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-2,-2,1,0,0,8);
+      g.addColorStop(0,'#e8623a');g.addColorStop(0.45,'#c1440e');g.addColorStop(0.8,'#8a2d08');g.addColorStop(1,'#4a1505');
+      return g;
+    },
+    links:[{label:'X / Twitter',sub:'Trades · Thoughts · Space facts',url:'https://x.com/christakenotes'}]
+  },
+  {
+    id:'jupiter',
+    name:'Jupiter',
+    sub:'Whop',
+    radius:30,
+    orbitRadius:360,
+    speed:0.084,
+    color:'#c88b3a',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-8,-8,2,0,0,30);
+      g.addColorStop(0,'#e8c090');g.addColorStop(0.2,'#c88b3a');g.addColorStop(0.5,'#a06428');g.addColorStop(0.75,'#c89060');g.addColorStop(1,'#7a4018');
+      return g;
+    },
+    bands:true,
+    links:[{label:'Whop',sub:'Indicators · Playbooks · Membership',url:'https://whop.com/christakenotes'}]
+  },
+  {
+    id:'saturn',
+    name:'Saturn',
+    sub:'',
+    radius:24,
+    orbitRadius:470,
+    speed:0.034,
+    color:'#e4d090',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-6,-6,2,0,0,24);
+      g.addColorStop(0,'#f0e0a8');g.addColorStop(0.3,'#d4b860');g.addColorStop(0.7,'#b09040');g.addColorStop(1,'#806820');
+      return g;
+    },
+    rings:true,
+    links:null
+  },
+  {
+    id:'uranus',
+    name:'Uranus',
+    sub:'',
+    radius:16,
+    orbitRadius:570,
+    speed:0.012,
+    color:'#7de8e8',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-4,-4,1,0,0,16);
+      g.addColorStop(0,'#b0f4f4');g.addColorStop(0.5,'#7de8e8');g.addColorStop(1,'#2a8888');
+      return g;
+    },
+    links:null
+  },
+  {
+    id:'neptune',
+    name:'Neptune',
+    sub:'Instagram',
+    radius:15,
+    orbitRadius:660,
+    speed:0.006,
+    color:'#3f54ba',
+    texture: ctx => {
+      const g=ctx.createRadialGradient(-4,-4,1,0,0,15);
+      g.addColorStop(0,'#7080e0');g.addColorStop(0.4,'#3f54ba');g.addColorStop(0.8,'#1a2870');g.addColorStop(1,'#080e30');
+      return g;
+    },
+    links:[{label:'Instagram',sub:'@christakenotes',url:'https://www.instagram.com/christakenotes'}]
+  }
+];
+
+// ─────────────────────────────────────────
+// CANVAS SETUP
+// ─────────────────────────────────────────
+const canvas = document.getElementById('universe');
+const ctx = canvas.getContext('2d');
+let W, H, cx, cy, scale = 1;
+let stars = [];
+let angles = {};
+let t = 0;
+let hoveredPlanet = null;
+let mouseX = 0, mouseY = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W / 2;
+  cy = H / 2;
+  // Scale orbits to fit screen — use 85% of shorter dimension / max orbit
+  const maxOrbit = PLANETS[PLANETS.length-1].orbitRadius;
+  const fit = Math.min(W, H) * 0.44;
+  scale = fit / maxOrbit;
+}
+
+// ─────────────────────────────────────────
+// STARS
+// ─────────────────────────────────────────
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 300; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.1 + 0.1,
+      a: Math.random() * 0.8 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.4 + 0.1
+    });
+  }
+}
+
+function drawStars() {
+  for (const s of stars) {
+    const twinkle = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.a * twinkle})`;
+    ctx.fill();
+  }
+}
+
+// ─────────────────────────────────────────
+// DRAW PLANET (on offscreen canvas)
+// ─────────────────────────────────────────
+function drawPlanetShape(pCtx, planet, r) {
+  pCtx.save();
+  pCtx.beginPath();
+  pCtx.arc(0, 0, r, 0, Math.PI * 2);
+  pCtx.fillStyle = planet.texture(pCtx);
+  pCtx.fill();
+
+  // Jupiter bands
+  if (planet.bands) {
+    const bandColors = ['rgba(180,120,60,0.3)','rgba(220,180,100,0.2)','rgba(160,100,40,0.35)','rgba(200,150,80,0.25)'];
+    const bandY = [-r*0.5,-r*0.15,r*0.2,r*0.55];
+    const bandH = [r*0.18,r*0.2,r*0.18,r*0.15];
+    pCtx.save();
+    pCtx.beginPath();
+    pCtx.arc(0,0,r,0,Math.PI*2);
+    pCtx.clip();
+    bandColors.forEach((c,i) => {
+      pCtx.fillStyle = c;
+      pCtx.fillRect(-r, bandY[i], r*2, bandH[i]);
+    });
+    // Great Red Spot
+    pCtx.beginPath();
+    pCtx.ellipse(r*0.2, r*0.25, r*0.18, r*0.1, 0, 0, Math.PI*2);
+    pCtx.fillStyle = 'rgba(180,60,30,0.45)';
+    pCtx.fill();
+    pCtx.restore();
+  }
+
+  // Atmosphere rim
+  const rimG = pCtx.createRadialGradient(0,0,r*0.75,0,0,r);
+  rimG.addColorStop(0,'rgba(255,255,255,0)');
+  rimG.addColorStop(0.7,'rgba(255,255,255,0.03)');
+  rimG.addColorStop(1,'rgba(255,255,255,0.12)');
+  pCtx.beginPath();
+  pCtx.arc(0,0,r,0,Math.PI*2);
+  pCtx.fillStyle = rimG;
+  pCtx.fill();
+
+  // Specular highlight
+  const specG = pCtx.createRadialGradient(-r*0.35,-r*0.4,0,-r*0.35,-r*0.4,r*0.5);
+  specG.addColorStop(0,'rgba(255,255,255,0.22)');
+  specG.addColorStop(1,'rgba(255,255,255,0)');
+  pCtx.beginPath();
+  pCtx.arc(0,0,r,0,Math.PI*2);
+  pCtx.fillStyle = specG;
+  pCtx.fill();
+
+  pCtx.restore();
+}
+
+// ─────────────────────────────────────────
+// MAIN DRAW
+// ─────────────────────────────────────────
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Deep space bg
+  const bgG = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W,H)*0.7);
+  bgG.addColorStop(0,'#00001a');
+  bgG.addColorStop(0.5,'#000010');
+  bgG.addColorStop(1,'#000005');
+  ctx.fillStyle = bgG;
+  ctx.fillRect(0, 0, W, H);
+
+  drawStars();
+
+  // Nebula blobs
+  const nb1 = ctx.createRadialGradient(W*0.15,H*0.2,0,W*0.15,H*0.2,W*0.3);
+  nb1.addColorStop(0,'rgba(80,20,180,0.06)');nb1.addColorStop(1,'rgba(80,20,180,0)');
+  ctx.fillStyle=nb1;ctx.fillRect(0,0,W,H);
+
+  const nb2 = ctx.createRadialGradient(W*0.8,H*0.7,0,W*0.8,H*0.7,W*0.25);
+  nb2.addColorStop(0,'rgba(24,212,240,0.04)');nb2.addColorStop(1,'rgba(24,212,240,0)');
+  ctx.fillStyle=nb2;ctx.fillRect(0,0,W,H);
+
+  // Orbit paths
+  ctx.save();
+  PLANETS.forEach(p => {
+    const r = p.orbitRadius * scale;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // Sun
+  const sunR = 36 * scale;
+  const sunG = ctx.createRadialGradient(cx-sunR*0.2, cy-sunR*0.2, sunR*0.05, cx, cy, sunR*1.6);
+  sunG.addColorStop(0,'#fff8e0');
+  sunG.addColorStop(0.15,'#ffe060');
+  sunG.addColorStop(0.4,'#ff9010');
+  sunG.addColorStop(0.7,'rgba(255,120,0,0.3)');
+  sunG.addColorStop(1,'rgba(255,80,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, sunR*1.6, 0, Math.PI*2);
+  ctx.fillStyle = sunG;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, sunR, 0, Math.PI*2);
+  const sunCore = ctx.createRadialGradient(cx-sunR*0.25,cy-sunR*0.25,0,cx,cy,sunR);
+  sunCore.addColorStop(0,'#ffffff');
+  sunCore.addColorStop(0.3,'#fff5c0');
+  sunCore.addColorStop(0.7,'#ffb830');
+  sunCore.addColorStop(1,'#ff6010');
+  ctx.fillStyle = sunCore;
+  ctx.fill();
+
+  // Planets
+  const planetPositions = [];
+
+  PLANETS.forEach(p => {
+    if (!angles[p.id]) angles[p.id] = Math.random() * Math.PI * 2;
+    angles[p.id] += (p.speed * 0.00015);
+
+    const orb = p.orbitRadius * scale;
+    const px = cx + Math.cos(angles[p.id]) * orb;
+    const py = cy + Math.sin(angles[p.id]) * orb;
+    const r = Math.max(4, p.radius * scale);
+
+    planetPositions.push({...p, px, py, r});
+
+    // Saturn rings (behind planet)
+    if (p.rings) {
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.scale(1, 0.3);
+      [
+        {inner: r*1.3, outer: r*2.0, color:'rgba(220,200,140,0.25)'},
+        {inner: r*2.0, outer: r*2.5, color:'rgba(200,180,110,0.18)'},
+        {inner: r*2.5, outer: r*2.9, color:'rgba(180,160,90,0.12)'},
+      ].forEach(ring => {
+        const rg = ctx.createRadialGradient(0,0,ring.inner,0,0,ring.outer);
+        rg.addColorStop(0,ring.color);rg.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(0,0,ring.outer,0,Math.PI*2);
+        ctx.arc(0,0,ring.inner,0,Math.PI*2,true);
+        ctx.fillStyle = rg;
+        ctx.fill();
+      });
+      ctx.restore();
+    }
+
+    // Glow on hover
+    if (hoveredPlanet === p.id && p.links) {
+      ctx.save();
+      const glowG = ctx.createRadialGradient(px,py,r*0.5,px,py,r*2.5);
+      glowG.addColorStop(0,'rgba(24,212,240,0.2)');
+      glowG.addColorStop(1,'rgba(24,212,240,0)');
+      ctx.beginPath();ctx.arc(px,py,r*2.5,0,Math.PI*2);
+      ctx.fillStyle=glowG;ctx.fill();
+      ctx.restore();
+    }
+
+    // Planet body
+    ctx.save();
+    ctx.translate(px, py);
+
+    // Shadow (terminator)
+    ctx.beginPath();
+    ctx.arc(0,0,r,0,Math.PI*2);
+    const shadowG = ctx.createRadialGradient(r*0.3,r*0.2,0,0,0,r);
+    shadowG.addColorStop(0,'rgba(0,0,0,0)');
+    shadowG.addColorStop(0.6,'rgba(0,0,0,0)');
+    shadowG.addColorStop(1,'rgba(0,0,0,0.7)');
+    ctx.fillStyle = planet => planet; // placeholder
+
+    drawPlanetShape(ctx, p, r);
+
+    // Terminator shadow overlay
+    ctx.beginPath();
+    ctx.arc(0,0,r,0,Math.PI*2);
+    const termG = ctx.createRadialGradient(r*0.4,r*0.3,0,0,0,r*1.1);
+    termG.addColorStop(0,'rgba(0,0,0,0)');
+    termG.addColorStop(0.55,'rgba(0,0,0,0)');
+    termG.addColorStop(1,'rgba(0,0,0,0.65)');
+    ctx.fillStyle=termG;ctx.fill();
+
+    ctx.restore();
+  });
+
+  // Update labels
+  updateLabels(planetPositions);
+
+  t += 0.016;
+  requestAnimationFrame(draw);
+
+  return planetPositions;
+}
+
+// ─────────────────────────────────────────
+// LABELS
+// ─────────────────────────────────────────
+let labelEls = {};
+
+function initLabels() {
+  const container = document.getElementById('labels');
+  PLANETS.forEach(p => {
+    if (!p.sub) return;
+    const div = document.createElement('div');
+    div.className = 'planet-label';
+    div.id = 'label-'+p.id;
+    div.innerHTML = `<div class="lsub">${p.sub}</div>`;
+    container.appendChild(div);
+    labelEls[p.id] = div;
+  });
+}
+
+function updateLabels(positions) {
+  positions.forEach(p => {
+    const el = labelEls[p.id];
+    if (!el) return;
+    const offset = p.r + 10;
+    el.style.left = p.px + 'px';
+    el.style.top = (p.py + offset) + 'px';
+    el.style.opacity = '1';
+  });
+}
+
+// ─────────────────────────────────────────
+// INTERACTION
+// ─────────────────────────────────────────
+let currentPositions = [];
+
+function getPlanetAt(x, y) {
+  for (const p of currentPositions) {
+    const dx = x - p.px, dy = y - p.py;
+    if (Math.sqrt(dx*dx+dy*dy) < p.r + 12) return p;
+  }
+  return null;
+}
+
+const card = document.getElementById('linkCard');
+const cardPlanet = document.getElementById('cardPlanet');
+const cardLinks = document.getElementById('cardLinks');
+
+function showCard(planet, x, y) {
+  cardPlanet.textContent = planet.name;
+  cardLinks.innerHTML = '';
+  planet.links.forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'card-link';
+    a.href = l.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = `${l.label} <span class="card-arrow">→</span>`;
+    cardLinks.appendChild(a);
+    if (l.sub) {
+      const s = document.createElement('div');
+      s.style.cssText='font-size:9px;letter-spacing:0.12em;color:rgba(24,212,240,0.5);margin:-4px 0 8px;';
+      s.textContent=l.sub;
+      cardLinks.appendChild(s);
+    }
+  });
+
+  // Position card — keep in viewport
+  let cx2 = x + 16, cy2 = y - 20;
+  if (cx2 + 220 > W) cx2 = x - 236;
+  if (cy2 + 120 > H) cy2 = H - 130;
+  if (cy2 < 10) cy2 = 10;
+
+  card.style.left = cx2 + 'px';
+  card.style.top = cy2 + 'px';
+  card.classList.add('visible');
+}
+
+function hideCard() {
+  card.classList.remove('visible');
+}
+
+canvas.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  const p = getPlanetAt(mouseX, mouseY);
+  if (p && p.links) {
+    canvas.style.cursor = 'pointer';
+    hoveredPlanet = p.id;
+    showCard(p, mouseX, mouseY);
+  } else {
+    canvas.style.cursor = 'default';
+    hoveredPlanet = null;
+    hideCard();
+  }
+});
+
+canvas.addEventListener('click', e => {
+  const p = getPlanetAt(e.clientX, e.clientY);
+  if (p && p.links && p.links.length === 1) {
+    window.open(p.links[0].url, '_blank', 'noopener');
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  hoveredPlanet = null;
+  hideCard();
+});
+
+// ─────────────────────────────────────────
+// MOBILE PLANET MINI RENDERS
+// ─────────────────────────────────────────
+function renderMiniPlanet(canvasId, planet) {
+  const c = document.getElementById(canvasId);
+  if (!c) return;
+  const ctx2 = c.getContext('2d');
+  ctx2.translate(14,14);
+  drawPlanetShape(ctx2, planet, 12);
+}
+
+// ─────────────────────────────────────────
+// MOBILE DETECTION
+// ─────────────────────────────────────────
+function checkMobile() {
+  if (window.innerWidth < 700) {
+    document.getElementById('mobileView').classList.add('active');
+    renderMiniPlanet('mp-earth', PLANETS.find(p=>p.id==='earth'));
+    renderMiniPlanet('mp-jupiter', PLANETS.find(p=>p.id==='jupiter'));
+    renderMiniPlanet('mp-mars', PLANETS.find(p=>p.id==='mars'));
+    renderMiniPlanet('mp-venus', PLANETS.find(p=>p.id==='venus'));
+    renderMiniPlanet('mp-neptune', PLANETS.find(p=>p.id==='neptune'));
+  } else {
+    document.getElementById('mobileView').classList.remove('active');
+  }
+}
+
+// ─────────────────────────────────────────
+// OVERRIDE draw to capture positions
+// ─────────────────────────────────────────
+const _draw = draw;
+function loop() {
+  ctx.clearRect(0,0,W,H);
+
+  const bgG = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.max(W,H)*0.7);
+  bgG.addColorStop(0,'#00001a');bgG.addColorStop(0.5,'#000010');bgG.addColorStop(1,'#000005');
+  ctx.fillStyle=bgG;ctx.fillRect(0,0,W,H);
+
+  drawStars();
+
+  const nb1=ctx.createRadialGradient(W*0.15,H*0.2,0,W*0.15,H*0.2,W*0.3);
+  nb1.addColorStop(0,'rgba(80,20,180,0.06)');nb1.addColorStop(1,'rgba(80,20,180,0)');
+  ctx.fillStyle=nb1;ctx.fillRect(0,0,W,H);
+
+  const nb2=ctx.createRadialGradient(W*0.8,H*0.7,0,W*0.8,H*0.7,W*0.25);
+  nb2.addColorStop(0,'rgba(24,212,240,0.04)');nb2.addColorStop(1,'rgba(24,212,240,0)');
+  ctx.fillStyle=nb2;ctx.fillRect(0,0,W,H);
+
+  // Orbit paths
+  PLANETS.forEach(p=>{
+    const r=p.orbitRadius*scale;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;ctx.stroke();
+  });
+
+  // Sun
+  const sunR=36*scale;
+  const sunG=ctx.createRadialGradient(cx-sunR*0.2,cy-sunR*0.2,sunR*0.05,cx,cy,sunR*1.6);
+  sunG.addColorStop(0,'#fff8e0');sunG.addColorStop(0.15,'#ffe060');
+  sunG.addColorStop(0.4,'#ff9010');sunG.addColorStop(0.7,'rgba(255,120,0,0.3)');sunG.addColorStop(1,'rgba(255,80,0,0)');
+  ctx.beginPath();ctx.arc(cx,cy,sunR*1.6,0,Math.PI*2);ctx.fillStyle=sunG;ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,sunR,0,Math.PI*2);
+  const sunCore=ctx.createRadialGradient(cx-sunR*0.25,cy-sunR*0.25,0,cx,cy,sunR);
+  sunCore.addColorStop(0,'#ffffff');sunCore.addColorStop(0.3,'#fff5c0');
+  sunCore.addColorStop(0.7,'#ffb830');sunCore.addColorStop(1,'#ff6010');
+  ctx.fillStyle=sunCore;ctx.fill();
+
+  // Planets
+  currentPositions = [];
+
+  // Saturn rings behind
+  PLANETS.forEach(p=>{
+    if(!angles[p.id]) angles[p.id]=Math.random()*Math.PI*2;
+    angles[p.id]+=(p.speed*0.00015);
+    const orb=p.orbitRadius*scale;
+    const px=cx+Math.cos(angles[p.id])*orb;
+    const py=cy+Math.sin(angles[p.id])*orb;
+    const r=Math.max(4,p.radius*scale);
+
+    if(p.rings){
+      ctx.save();ctx.translate(px,py);ctx.scale(1,0.28);
+      [{inner:r*1.25,outer:r*1.9,color:'rgba(220,200,140,0.22)'},
+       {inner:r*1.9,outer:r*2.4,color:'rgba(200,180,110,0.16)'},
+       {inner:r*2.4,outer:r*2.8,color:'rgba(180,160,90,0.1)'}
+      ].forEach(ring=>{
+        ctx.beginPath();ctx.arc(0,0,ring.outer,0,Math.PI*2);ctx.arc(0,0,ring.inner,0,Math.PI*2,true);
+        ctx.fillStyle=ring.color;ctx.fill();
+      });
+      ctx.restore();
+    }
+  });
+
+  // Planet bodies
+  PLANETS.forEach(p=>{
+    const orb=p.orbitRadius*scale;
+    const px=cx+Math.cos(angles[p.id])*orb;
+    const py=cy+Math.sin(angles[p.id])*orb;
+    const r=Math.max(4,p.radius*scale);
+    currentPositions.push({...p,px,py,r});
+
+    if(hoveredPlanet===p.id&&p.links){
+      ctx.save();
+      const glowG=ctx.createRadialGradient(px,py,r*0.5,px,py,r*2.8);
+      glowG.addColorStop(0,'rgba(24,212,240,0.18)');glowG.addColorStop(1,'rgba(24,212,240,0)');
+      ctx.beginPath();ctx.arc(px,py,r*2.8,0,Math.PI*2);ctx.fillStyle=glowG;ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.save();ctx.translate(px,py);
+    drawPlanetShape(ctx,p,r);
+    // Terminator
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);
+    const termG=ctx.createRadialGradient(r*0.4,r*0.3,0,0,0,r*1.1);
+    termG.addColorStop(0,'rgba(0,0,0,0)');termG.addColorStop(0.55,'rgba(0,0,0,0)');termG.addColorStop(1,'rgba(0,0,0,0.65)');
+    ctx.fillStyle=termG;ctx.fill();
+    ctx.restore();
+  });
+
+  updateLabels(currentPositions);
+  t+=0.016;
+  requestAnimationFrame(loop);
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+resize();
+initStars();
+initLabels();
+checkMobile();
+loop();
+
+window.addEventListener('resize',()=>{
+  resize();
+  initStars();
+  checkMobile();
+});
+</script>
+</body>
+</html>
